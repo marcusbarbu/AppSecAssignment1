@@ -1,7 +1,7 @@
 language: c
 compiler: gcc
 
-before_install: sudo apt-get install libcheck
+before_install: sudo apt-get install check
 
 script: make test
 

@@ -55,18 +55,18 @@ bool check_word(const char* word, hashmap_t hashtable[]){
 char* cleanWord(char* orig, bool trim){
     char* new_string;
     if (trim){
-        new_string = (char*) malloc(sizeof(char)*(strlen(orig)-1));
-        memset(new_string, 0x00, strlen(orig));
-        strncpy(new_string, orig, strlen(orig)-1);
-    }
-    else{
         new_string = (char*) malloc(sizeof(char)*(strlen(orig)));
         memset(new_string, 0x00, strlen(orig));
         strncpy(new_string, orig, strlen(orig)-1);
     }
+    else{
+        new_string = (char*) malloc(sizeof(char)*(strlen(orig))+1);
+        memset(new_string, 0x00, strlen(orig)+1);
+        strncpy(new_string, orig, strlen(orig));
+    }
 
     int removable = 0;
-    for (int i=0;i<strlen(new_string);i++){
+    for (int i=0; i<strlen(new_string); i++){
         new_string[i] = tolower(new_string[i]);
         if ((new_string[i]>0x7A || new_string[i]<0x61) && i==strlen(new_string)-1){
             removable++;
@@ -74,8 +74,8 @@ char* cleanWord(char* orig, bool trim){
     }
     if (removable != 0){
         char* ret_string;
-        ret_string = (char*) malloc(sizeof(char) * strlen(new_string)-removable);
-        memset(ret_string, 0x00, strlen(new_string)-removable);
+        ret_string = (char*) malloc(sizeof(char) * (strlen(new_string)-removable)+1);
+        memset(ret_string, 0x00, (strlen(new_string)-removable)+1);
         strncpy(ret_string, new_string, strlen(new_string)-removable);
         free(new_string);
         new_string = NULL;
@@ -106,7 +106,7 @@ int check_words(FILE* fp, hashmap_t hashtable[], char * misspelled[]){
             misspelled[wrong] = trimmedWord;
             wrong++;
         }
-        else{
+        else {
             free(trimmedWord);
         }
         trimmedWord = NULL;

@@ -117,6 +117,8 @@ int check_words(FILE* fp, hashmap_t hashtable[], char * misspelled[]){
             }
             index_in_line++;
         }
+        free(line);
+        line = NULL;
     }
     return wrong;
 }

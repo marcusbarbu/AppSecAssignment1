@@ -49,8 +49,7 @@ bool load_dictionary(const char* dictionary_file, hashmap_t hashtable[]){
     return true;
 }
 
-
-bool check_word(const char* word, hashmap_t hashtable[]){
+bool word_in_table(const char* word, hashmap_t hashtable[]){
     int res = 0;
     node* n = hashtable[hash_function(word)];
     while(n != NULL){
@@ -58,23 +57,26 @@ bool check_word(const char* word, hashmap_t hashtable[]){
         if (res == 0) return true;
         else n = n->next;
     }
+    return false;
+}
+
+bool check_word(const char* word, hashmap_t hashtable[]){
+    if (word_in_table(word, hashtable)) return true;
     char* lowered = (char*) malloc(sizeof(char)*strlen(word)+1);
     memset(lowered, 0x00, strlen(word)+1);
     strncpy(lowered, word, strlen(word));
     lowered[0] = tolower(lowered[0]);
-    n = hashtable[hash_function(lowered)];
-    while(n != NULL){
-        res = strncasecmp(n->word, word, strlen(lowered));
-        if (res == 0) {
-            free(lowered);
-            lowered = NULL;
-            return true;
-        }
-        else n = n->next;
-    }
+    bool value = false;
+    if (word_in_table(lowered, hashtable)) value = true;
     free(lowered);
     lowered = NULL;
-    return false;
+    if (value == true) return true;
+
+    for (int i=0; i<strlen(word); i++){
+        if (isalpha(word[i]) || word[i] < 0) return false;
+    }
+    return true;
+
 }
 
 int check_words(FILE* fp, hashmap_t hashtable[], char * misspelled[]){
@@ -99,9 +101,15 @@ int check_words(FILE* fp, hashmap_t hashtable[], char * misspelled[]){
             c = line[index_in_line];
             if (c == EOF) break;
 
-            if ((isalnum(c) || c == '\'') && index_in_line < read){
-                curWord[i] = c;
-                i++;
+            if ((isalnum(c) || c == '\'' || c < 0) && index_in_line < read){
+                printf("char %c value %d\n",c,c);
+                if (c == -30){ //handle unicode codepoint for punctuation
+                    i+=2;
+                }
+                else{
+                    curWord[i] = c;
+                    i++;
+                }
             }
             else{
                 if(strlen(curWord) > 0 && !check_word(curWord, hashtable)){

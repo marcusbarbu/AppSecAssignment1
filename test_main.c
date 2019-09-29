@@ -80,6 +80,25 @@ START_TEST(test_check_words_pnp)
 }
 END_TEST
 
+START_TEST(test_unicode_numbers)
+{
+    hashmap_t hashtable[HASH_SIZE];
+    load_dictionary(DICTIONARY, hashtable);
+    char* expected[2];
+    char *misspelled[MAX_MISSPELLED];
+    expected[0] = "tráffico";
+    expected[1] = "這揭開了德";
+    FILE* fp = fopen("spanish.txt", "r");
+    int num_misspelled = check_words(fp, hashtable, misspelled);
+    ck_assert_msg(strcmp(misspelled[0], expected[0]) ==0, "actual %s, expected %s", misspelled[0], expected[0]);
+    fp = fopen("chinese.txt", "r");
+    num_misspelled = check_words(fp, hashtable, misspelled);
+    ck_assert_msg(strcmp(misspelled[0], expected[1]) ==0, "actual %s, expected %s", misspelled[0], expected[1]);
+    fp = fopen("phone.txt", "r");  
+    num_misspelled = check_words(fp, hashtable, misspelled);
+    ck_assert_msg(num_misspelled == 0, "actual %d", num_misspelled);
+}
+END_TEST
 Suite *
 check_word_suite(void)
 {
@@ -90,6 +109,7 @@ check_word_suite(void)
     tcase_add_test(check_word_case, test_check_word_normal);
     tcase_add_test(check_word_case, test_check_words_normal);
     tcase_add_test(check_word_case, test_check_words_pnp);
+    tcase_add_test(check_word_case, test_unicode_numbers);
     suite_add_tcase(suite, check_word_case);
 
     return suite;

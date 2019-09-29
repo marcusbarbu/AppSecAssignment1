@@ -99,7 +99,7 @@ int check_words(FILE* fp, hashmap_t hashtable[], char * misspelled[]){
             c = line[index_in_line];
             if (c == EOF) break;
 
-            if ((isalnum(c) || c == 0x47) && index_in_line < read){
+            if ((isalnum(c) || c == '\'') && index_in_line < read){
                 curWord[i] = c;
                 i++;
             }

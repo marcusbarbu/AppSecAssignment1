@@ -50,6 +50,36 @@ START_TEST(test_check_words_normal)
 }
 END_TEST
 
+START_TEST(test_check_words_pnp)
+{
+    hashmap_t hashtable[HASH_SIZE];
+    load_dictionary(DICTIONARY, hashtable);
+    char* expected[7];
+    expected[0] = "neighbourhood";
+    expected[1] = "proparty";
+    expected[2] = "Bennet";
+    expected[3] = "Netherfield";
+    expected[4] = "Bennet";
+    expected[5] = "hiere";
+    expected[6] = "t'old";
+    char *misspelled[MAX_MISSPELLED];
+    FILE *fp = fopen("pnp.txt", "r");
+    int num_misspelled = check_words(fp, hashtable, misspelled);
+    ck_assert_msg(num_misspelled == 7, "actual %d", num_misspelled);
+    bool test = strlen(misspelled[0]) == strlen(expected[0]);
+    int len1 = strlen(misspelled[0]);
+    int len2 = strlen(expected[0]);
+    ck_assert_msg(test, "%d!=%d", len1, len2);
+    ck_assert_msg(strcmp(misspelled[0], expected[0]) == 0, "actual %s, expected %s", misspelled[0], expected[0]);
+    ck_assert_msg(strcmp(misspelled[1], expected[1]) == 0, "actual %s, expected %s", misspelled[1], expected[1]);
+    ck_assert_msg(strcmp(misspelled[2], expected[2]) == 0, "actual %s, expected %s", misspelled[2], expected[2]);
+    ck_assert_msg(strcmp(misspelled[3], expected[3]) == 0, "actual %s, expected %s", misspelled[3], expected[3]);
+    ck_assert_msg(strcmp(misspelled[4], expected[4]) == 0, "actual %s, expected %s", misspelled[4], expected[4]);
+    ck_assert_msg(strcmp(misspelled[5], expected[5]) == 0, "actual %s, expected %s", misspelled[5], expected[5]);
+    ck_assert_msg(strcmp(misspelled[6], expected[6]) == 0, "actual %s, expected %s", misspelled[6], expected[6]);
+}
+END_TEST
+
 Suite *
 check_word_suite(void)
 {
@@ -59,6 +89,7 @@ check_word_suite(void)
     check_word_case = tcase_create("Core");
     tcase_add_test(check_word_case, test_check_word_normal);
     tcase_add_test(check_word_case, test_check_words_normal);
+    tcase_add_test(check_word_case, test_check_words_pnp);
     suite_add_tcase(suite, check_word_case);
 
     return suite;

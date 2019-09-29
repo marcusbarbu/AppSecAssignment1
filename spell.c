@@ -85,7 +85,6 @@ int check_words(FILE* fp, hashmap_t hashtable[], char * misspelled[]){
     int wrong = 0;
     memset(misspelled, 0x00, MAX_MISSPELLED * sizeof(char*));
 
-    char c = 0x00;
     char* curWord = (char*) malloc(sizeof(char) * LENGTH);
     memset(curWord, 0x00, LENGTH);
 
@@ -97,35 +96,62 @@ int check_words(FILE* fp, hashmap_t hashtable[], char * misspelled[]){
 
     while((read = getline(&line, &n, fp)) != -1){
         index_in_line = 0;
-        while (index_in_line <= read){
-            c = line[index_in_line];
-            if (c == EOF) break;
+        while (index_in_line < read){
+            while (index_in_line < read && !isalnum(line[index_in_line])) index_in_line++;
+            while (index_in_line < read && line[index_in_line] != ' '){
+                curWord[i] = line[index_in_line];
+                i++;
+                index_in_line++;
+            }
 
-            if ((isalnum(c) || c == '\'' || c < 0) && index_in_line < read){
-                if (c == -30){ //handle unicode codepoint for punctuation
-                    i+=2;
-                }
-                else{
-                    curWord[i] = c;
-                    i++;
-                }
+            i = strlen(curWord);            
+            while(!isalnum(curWord[i]) && i>=0){
+                curWord[i--] = '\x00';
             }
-            else{
-                if(strlen(curWord) > 0 && !check_word(curWord, hashtable)){
-                        misspelled[wrong] = curWord;   
-                        wrong++;
-                    }
-                else {
-                    free(curWord);
-                }
-                curWord = (char*) malloc(sizeof(char)*LENGTH);
-                memset(curWord, 0x00, LENGTH);
-                i = 0;
+
+            if (strlen(curWord) > 0 && !check_word(curWord, hashtable)){
+                misspelled[wrong++] = curWord;
             }
+            else {
+                free(curWord);
+            }
+            curWord = (char*) malloc(sizeof(char) * LENGTH);
+            memset(curWord, 0x00, LENGTH);
+            i = 0;
             index_in_line++;
         }
-        free(line);
-        line = NULL;
     }
+    // while((read = getline(&line, &n, fp)) != -1){
+    //     index_in_line = 0;
+    //     while (index_in_line <= read){
+    //         c = line[index_in_line];
+    //         if (c == EOF) break;
+
+    //         if ((isalnum(c) || c == '\'' || c < 0) && index_in_line < read){
+    //             if (c == -30){ //handle unicode codepoint for punctuation
+    //                 i+=2;
+    //             }
+    //             else{
+    //                 curWord[i] = c;
+    //                 i++;
+    //             }
+    //         }
+    //         else{
+    //             if(strlen(curWord) > 0 && !check_word(curWord, hashtable)){
+    //                     misspelled[wrong] = curWord;   
+    //                     wrong++;
+    //                 }
+    //             else {
+    //                 free(curWord);
+    //             }
+    //             curWord = (char*) malloc(sizeof(char)*LENGTH);
+    //             memset(curWord, 0x00, LENGTH);
+    //             i = 0;
+    //         }
+    //         index_in_line++;
+    //     }
+    //     free(line);
+    //     line = NULL;
+    // }
     return wrong;
 }

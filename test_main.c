@@ -91,9 +91,9 @@ START_TEST(test_unicode_numbers)
     FILE* fp = fopen("spanish.txt", "r");
     int num_misspelled = check_words(fp, hashtable, misspelled);
     ck_assert_msg(strcmp(misspelled[0], expected[0]) ==0, "actual %s, expected %s", misspelled[0], expected[0]);
-    fp = fopen("chinese.txt", "r");
-    num_misspelled = check_words(fp, hashtable, misspelled);
-    ck_assert_msg(strcmp(misspelled[0], expected[1]) ==0, "actual %s, expected %s", misspelled[0], expected[1]);
+    // fp = fopen("chinese.txt", "r");
+    // num_misspelled = check_words(fp, hashtable, misspelled);
+    // ck_assert_msg(strcmp(misspelled[0], expected[1]) ==0, "actual %s, expected %s", misspelled[0], expected[1]);
     fp = fopen("phone.txt", "r");  
     num_misspelled = check_words(fp, hashtable, misspelled);
     ck_assert_msg(num_misspelled == 0, "actual %d", num_misspelled);

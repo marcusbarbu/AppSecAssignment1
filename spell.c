@@ -102,7 +102,6 @@ int check_words(FILE* fp, hashmap_t hashtable[], char * misspelled[]){
             if (c == EOF) break;
 
             if ((isalnum(c) || c == '\'' || c < 0) && index_in_line < read){
-                printf("char %c value %d\n",c,c);
                 if (c == -30){ //handle unicode codepoint for punctuation
                     i+=2;
                 }

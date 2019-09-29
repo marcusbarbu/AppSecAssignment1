@@ -1,4 +1,4 @@
-#CC = /home/marcus/afl-2.52b/afl-gcc
+CC = /home/marcus/afl-2.52b/afl-gcc
 default: test
 
 get-deps:
@@ -9,7 +9,7 @@ dictionary.o: dictionary.c
 	$(CC) -Wall -c dictionary.c dictionary.h
 
 spell.o: spell.c
-	$(CC) -Wall -ggdb -c spell.c
+	$(CC) -Wall -ggdb -O3 -c spell.c
 
 test.o: test_main.c
 	$(CC) -Wall -c test_main.c
@@ -37,4 +37,4 @@ cleanall:clean
 	rm spell_check
 
 fuzzprep: dictionary.o spell.o m_main.o
-	$(CC) -Wall -ggdb -o f_main m_main.o spell.o dictionary.o -lcheck -lm -lrt -lpthread -lsubunit
+	$(CC) -Wall -ggdb -O3 -o f_main m_main.o spell.o dictionary.o -lcheck -lm -lrt -lpthread -lsubunit

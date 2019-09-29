@@ -62,6 +62,12 @@ bool word_in_table(const char* word, hashmap_t hashtable[]){
 
 bool check_word(const char* word, hashmap_t hashtable[]){
     if (word_in_table(word, hashtable)) return true;
+    bool isNumeric = true;
+    for (int i=0; i<strlen(word); i++){
+        if (isalpha(word[i]) || word[i] < 0) isNumeric = false;
+    }
+    if (isNumeric) return true;
+
     char* lowered = (char*) malloc(sizeof(char)*strlen(word)+1);
     memset(lowered, 0x00, strlen(word)+1);
     strncpy(lowered, word, strlen(word));
@@ -70,12 +76,7 @@ bool check_word(const char* word, hashmap_t hashtable[]){
     if (word_in_table(lowered, hashtable)) value = true;
     free(lowered);
     lowered = NULL;
-    if (value == true) return true;
-
-    for (int i=0; i<strlen(word); i++){
-        if (isalpha(word[i]) || word[i] < 0) return false;
-    }
-    return true;
+    return value;
 
 }
 
@@ -121,37 +122,5 @@ int check_words(FILE* fp, hashmap_t hashtable[], char * misspelled[]){
             index_in_line++;
         }
     }
-    // while((read = getline(&line, &n, fp)) != -1){
-    //     index_in_line = 0;
-    //     while (index_in_line <= read){
-    //         c = line[index_in_line];
-    //         if (c == EOF) break;
-
-    //         if ((isalnum(c) || c == '\'' || c < 0) && index_in_line < read){
-    //             if (c == -30){ //handle unicode codepoint for punctuation
-    //                 i+=2;
-    //             }
-    //             else{
-    //                 curWord[i] = c;
-    //                 i++;
-    //             }
-    //         }
-    //         else{
-    //             if(strlen(curWord) > 0 && !check_word(curWord, hashtable)){
-    //                     misspelled[wrong] = curWord;   
-    //                     wrong++;
-    //                 }
-    //             else {
-    //                 free(curWord);
-    //             }
-    //             curWord = (char*) malloc(sizeof(char)*LENGTH);
-    //             memset(curWord, 0x00, LENGTH);
-    //             i = 0;
-    //         }
-    //         index_in_line++;
-    //     }
-    //     free(line);
-    //     line = NULL;
-    // }
     return wrong;
 }

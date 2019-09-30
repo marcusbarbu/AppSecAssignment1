@@ -25,8 +25,14 @@ bool load_dictionary(const char* dictionary_file, hashmap_t hashtable[]){
         //generate and clear a new node
         curnode = (node*) malloc(sizeof(node));
         memset(curnode, 0x00, sizeof(node));
-        strncpy(curnode->word, line, read-1); //copy in all but the last char (the newline)
-
+        strncpy(curnode->word, line, LENGTH); //copy in all but the last char (the newline)
+        curnode->word[LENGTH] = '\x00'; //null terminate it just in case
+        for (int i=strlen(curnode->word);i>0; i--){
+            if (curnode->word[i] == '\n'){
+                curnode->word[i] = '\x00';
+                break;
+            }
+        }
         //clean up mem used by getline
         free(line);
         line = NULL;
@@ -99,12 +105,12 @@ int check_words(FILE* fp, hashmap_t hashtable[], char * misspelled[]){
         index_in_line = 0;
         while (index_in_line < read){
             while (index_in_line < read && !isalnum(line[index_in_line])) index_in_line++;
-            while (index_in_line < read && line[index_in_line] != ' '){
+            while (index_in_line < read && line[index_in_line] != ' ' && i < LENGTH){
                 curWord[i] = line[index_in_line];
                 i++;
                 index_in_line++;
             }
-
+            if (i == LENGTH) curWord[i] = '\x00';
             i = strlen(curWord);            
             while(!isalnum(curWord[i]) && i>=0){
                 curWord[i--] = '\x00';

@@ -99,6 +99,35 @@ START_TEST(test_unicode_numbers)
     ck_assert_msg(num_misspelled == 0, "actual %d", num_misspelled);
 }
 END_TEST
+
+START_TEST(test_word_overflow)
+{
+    hashmap_t hashtable[HASH_SIZE];
+    load_dictionary(DICTIONARY, hashtable);
+    bool m = check_word("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", hashtable);
+    ck_assert_msg(m == false, "check_word failed");
+
+    char *misspelled[MAX_MISSPELLED];
+    FILE* fp = fopen("overflow.txt", "r");
+    int num_misspelled = check_words(fp, hashtable, misspelled);
+    ck_assert_msg(num_misspelled == 7, "Failed checking words from file, actual %d", num_misspelled);
+}
+END_TEST
+
+START_TEST(test_dict_overflow)
+{
+    hashmap_t hashtable[HASH_SIZE];
+    load_dictionary("ovwordlist.txt", hashtable);
+    bool m = check_word("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", hashtable);
+    ck_assert_msg(m == false, "check_word failed");
+
+    char *misspelled[MAX_MISSPELLED];
+    FILE* fp = fopen("test1.txt", "r");
+    int num_misspelled = check_words(fp, hashtable, misspelled);
+    ck_assert_msg(num_misspelled == 3, "actual %d", num_misspelled);
+}
+END_TEST
+
 Suite *
 check_word_suite(void)
 {
@@ -110,6 +139,8 @@ check_word_suite(void)
     tcase_add_test(check_word_case, test_check_words_normal);
     tcase_add_test(check_word_case, test_check_words_pnp);
     tcase_add_test(check_word_case, test_unicode_numbers);
+    tcase_add_test(check_word_case, test_word_overflow);
+    tcase_add_test(check_word_case, test_dict_overflow);
     suite_add_tcase(suite, check_word_case);
 
     return suite;

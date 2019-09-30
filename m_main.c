@@ -49,14 +49,14 @@ int main(int argc, char* argv[]){
     FILE *workp = fopen(work, "r");
     char* missed[MAX_MISSPELLED];
     int x = check_words(workp, ht, missed);
-    // printf("%d words were misspelled\n", x);
-    // for (int i=0;i<x;i++){
-    //     printf("Wrong: %s\n", missed[i]);
-    //     free(missed[i]);
-    //     missed[i] = NULL;
-    // }
-    // for (int i=0; i<HASH_SIZE; i++){
-    //     free(ht[i]);
-    //     ht[i] = NULL;
-    // }
+    printf("%d words were misspelled\n", x);
+    for (int i=0;i<x;i++){
+        printf("Wrong: %s\n", missed[i]);
+        free(missed[i]);
+        missed[i] = NULL;
+    }
+    for (int i=0; i<HASH_SIZE; i++){
+        free(ht[i]);
+        ht[i] = NULL;
+    }
 }
